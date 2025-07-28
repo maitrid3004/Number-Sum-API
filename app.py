@@ -1,40 +1,44 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import hashlib, json, sqlite3, datetime
+from flask import Flask, request, jsonify, render_template
+from flask_sqlalchemy import SQLAlchemy
+import hashlib
+import json
 
 app = Flask(__name__)
-CORS(app)
-conn = sqlite3.connect('sums.db', check_same_thread=False)
-cursor = conn.cursor()
-cursor.execute('''CREATE TABLE IF NOT EXISTS requests
-    (id INTEGER PRIMARY KEY, numbers_hash TEXT, numbers_json TEXT, result_sum INTEGER, created_at TEXT)''')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sum_cache.db'
+db = SQLAlchemy(app)
 
-def hash_numbers(numbers):
-    return hashlib.sha256(json.dumps(sorted(numbers)).encode()).hexdigest()
+class SumCache(db.Model):
+    id = db.Column(db.String, primary_key=True)
+    input = db.Column(db.Text, unique=True, nullable=False)
+    result = db.Column(db.Integer, nullable=False)
+
+with app.app_context():
+    db.create_all()
+
+
 @app.route('/')
-def home():
-    return "✅ Welcome to the Number Sum API! Use POST /sum with JSON: {\"numbers\": [1,2,3]}"
+def index():
+    return render_template('index.html')
 
 @app.route('/sum', methods=['POST'])
-def compute_sum():
+def sum_numbers():
     data = request.get_json()
-    numbers = data.get('numbers')
+    numbers = data.get('numbers', [])
 
     if not isinstance(numbers, list) or not all(isinstance(n, (int, float)) for n in numbers):
         return jsonify({'error': 'Invalid input'}), 400
 
-    h = hash_numbers(numbers)
-    cursor.execute("SELECT result_sum FROM requests WHERE numbers_hash=?", (h,))
-    row = cursor.fetchone()
+    key = hashlib.md5(json.dumps(numbers).encode()).hexdigest()
+    cached = SumCache.query.get(key)
 
-    if row:
-        return jsonify({'sum': row[0], 'cached': True})
+    if cached:
+        return jsonify({'sum': cached.result, 'cached': True})
 
-    total = sum(numbers)
-    cursor.execute("INSERT INTO requests (numbers_hash, numbers_json, result_sum, created_at) VALUES (?, ?, ?, ?)",
-                   (h, json.dumps(numbers), total, datetime.datetime.now().isoformat()))
-    conn.commit()
-    return jsonify({'sum': total, 'cached': False})
+    result = sum(numbers)
+    new_entry = SumCache(id=key, input=json.dumps(numbers), result=result)
+    db.session.add(new_entry)
+    db.session.commit()
+    return jsonify({'sum': result, 'cached': False})
 
 if __name__ == '__main__':
     app.run(debug=True)

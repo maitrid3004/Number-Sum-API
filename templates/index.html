@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Number Sum API</title>
+</head>
+<body>
+  <h2>✅ Welcome to the Number Sum API!</h2>
+  <form action="/sum" method="post" id="sumForm">
+    <label for="numbers">Enter numbers (comma-separated):</label><br>
+    <input type="text" id="numbers" name="numbers" placeholder="e.g. 1,2,3"><br><br>
+    <button type="submit">Calculate Sum</button>
+  </form>
+  <h3 id="result"></h3>
+
+  <script>
+    document.getElementById('sumForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('numbers').value;
+      const nums = input.split(',').map(Number);
+      const response = await fetch('/sum', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numbers: nums })
+      });
+      const data = await response.json();
+      document.getElementById('result').textContent = 'Sum: ' + data.sum;
+    });
+  </script>
+</body>
+</html>
