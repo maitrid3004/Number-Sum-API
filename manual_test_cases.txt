@@ -1,0 +1,6 @@
+Manual Test Cases:
+
+TC1: Input: [1, 2, 3] => Expected Output: 6, cached: false
+TC2: Input: [] => Expected Output: 0, cached: false
+TC3: Input: ["a", 2] => Expected Output: 400 Bad Request
+TC4: Input: [2, 3, 4] => Run twice, second time cached: true
