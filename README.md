@@ -91,6 +91,7 @@ sum_api_project/
    python app.py
    ```
 
-   <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/666d3931-f334-4ead-a235-f543556ee18b" />
+   <img width="1698" height="823" alt="image" src="https://github.com/user-attachments/assets/5189fbd1-fe47-4623-89e6-d138e63acb63" />
+
 
 
