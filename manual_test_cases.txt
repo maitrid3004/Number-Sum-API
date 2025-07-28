@@ -1,0 +1,21 @@
+Manual Test Cases for Number Sum API
+
+1. TC001 - Valid input
+Request: {"numbers": [1, 2, 3]}
+Expected: 200 OK, sum: 6, cached: false (first time)
+
+2. TC002 - Repeated input
+Request: {"numbers": [1, 2, 3]}
+Expected: 200 OK, sum: 6, cached: true
+
+3. TC003 - Empty list
+Request: {"numbers": []}
+Expected: 200 OK, sum: 0, cached: false
+
+4. TC004 - Invalid input (string in list)
+Request: {"numbers": [1, "a", 3]}
+Expected: 400 Bad Request
+
+5. TC005 - Missing 'numbers' key
+Request: {}
+Expected: 400 Bad Request

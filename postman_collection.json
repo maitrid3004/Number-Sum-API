@@ -1,0 +1,34 @@
+{
+  "info": {
+    "name": "Number Sum API",
+    "_postman_id": "abcd1234-abcd-1234-abcd-1234abcd5678",
+    "description": "A Postman collection to test the Number Sum API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Compute Sum",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numbers\": [10, 20, 30]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/sum",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["sum"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
